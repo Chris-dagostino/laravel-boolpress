@@ -15,7 +15,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with(['category','tags'])->paginate(3);
+        $posts = Post::with(['category','tags'])->paginate(2);
 
         return response()->json(
             [
@@ -26,4 +26,24 @@ class PostController extends Controller
 
     }
 
+    public function show($slug)
+    {
+        $post = Post::where('slug', '=', $slug)->with(['category', 'tags'])->first();
+
+        if ($post) {
+            return response()->json(
+                [
+                    'result' => $post,
+                    'success' => true
+                ]
+            );
+        } else {
+            return response()->json(
+                [
+                    'result' => 'Nessun risultato trovato',
+                    'success' => false
+                ]
+            );
+        }
+    }
 }

@@ -5,7 +5,7 @@
             <h1>Elenco dei post</h1>
 
             <div class="row">
-                <div class="col-4" v-for="post in posts" :key="post.id">
+                <div class="col-6" v-for="post in posts" :key="post.id">
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title">{{ post.title }}</h5>

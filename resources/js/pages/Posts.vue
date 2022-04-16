@@ -11,7 +11,7 @@
                         :content='post.content'
                         :slug='post.slug'
                         :category='post.category'
-                        :tags='post.tags'
+                        :img='post.cover'
                     />
                 </div>
             </div>
@@ -33,7 +33,7 @@
 import Post from '../components/Post';
 
 export default {
-    name: 'Main',
+    name: 'Posts',
     components: {
         Post
     },

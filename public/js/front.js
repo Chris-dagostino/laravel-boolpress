@@ -2012,9 +2012,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'Post',
-  props: ['title', 'content', 'slug', 'category', 'tags'],
+  props: ['img', 'title', 'content', 'slug', 'category', 'tags'],
   data: function data() {
     return {
       strTruncateLen: 50
@@ -2073,8 +2074,84 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'Contact'
+  name: 'Contact',
+  data: function data() {
+    return {
+      name: '',
+      email: '',
+      message: '',
+      sendingInProgress: false,
+      errors: {},
+      success: false
+    };
+  },
+  methods: {
+    sendForm: function sendForm() {
+      var _this = this;
+
+      this.sendingInProgress = true;
+      axios.post('/api/contacts', {
+        'name': this.name,
+        'email': this.email,
+        'message': this.message
+      }).then(function (response) {
+        _this.sendingInProgress = false;
+
+        if (response.data.errors) {
+          _this.errors = response.data.errors;
+          _this.success = false;
+        } else {
+          _this.success = true;
+          _this.name = '';
+          _this.email = '';
+          _this.message = '';
+          _this.errors = {};
+        }
+      });
+    }
+  }
 });
 
 /***/ }),
@@ -2162,7 +2239,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'Main',
+  name: 'Posts',
   components: {
     Post: _components_Post__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
@@ -2226,6 +2303,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'SinglePost',
   data: function data() {
@@ -2233,19 +2311,27 @@ __webpack_require__.r(__webpack_exports__);
       post: null
     };
   },
-  mounted: function mounted() {
-    var _this = this;
+  methods: {
+    getPost: function getPost() {
+      var _this = this;
 
-    var slug = this.$route.params.slug;
-    axios.get('/api/posts/' + slug).then(function (response) {
-      if (response.data.succes == false) {
-        _this.$router.push({
-          name: 'not-found'
-        });
-      } else {
-        _this.post = response.data.result;
-      }
-    });
+      var slug = this.$route.params.slug;
+      axios.get('/api/posts/' + slug).then(function (response) {
+        if (response.data.succes == false) {
+          _this.$router.push({
+            name: 'not-found'
+          });
+        } else {
+          _this.post = response.data.result;
+        }
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.getPost();
+  },
+  updated: function updated() {
+    this.getPost();
   }
 });
 
@@ -3538,6 +3624,11 @@ var render = function () {
       [
         _c("h2", { staticClass: "card-title" }, [_vm._v(_vm._s(_vm.title))]),
         _vm._v(" "),
+        _c("img", {
+          staticClass: "img-fluid",
+          attrs: { src: _vm.img, alt: "title" },
+        }),
+        _vm._v(" "),
         _c("h4", { staticClass: "card-text" }, [
           _vm._v(_vm._s(_vm.category ? _vm.category.name : " ")),
         ]),
@@ -3620,24 +3711,199 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("h1", [_vm._v("Contattaci")]),
-      _vm._v(" "),
-      _c("p", [
-        _vm._v(
-          "Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum quisquam atque nostrum dolore doloribus nisi voluptatibus, repellendus sed, officiis aspernatur id labore est voluptates aperiam deserunt laboriosam ipsam animi et."
+  return _c("div", { staticClass: "container" }, [
+    _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-12" }, [
+        _c(
+          "form",
+          {
+            on: {
+              submit: function ($event) {
+                $event.preventDefault()
+                return _vm.sendForm.apply(null, arguments)
+              },
+            },
+          },
+          [
+            _vm.success
+              ? _c("div", { staticClass: "alert alert-success" }, [
+                  _vm._v(
+                    "\n            Email inviata con successo!!\n        "
+                  ),
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _c("label", { attrs: { for: "name" } }, [
+                  _vm._v("Come ti chiami?"),
+                ]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.name,
+                      expression: "name",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  class: { "is-invalid": _vm.errors.name },
+                  attrs: { type: "text", id: "name", name: "name" },
+                  domProps: { value: _vm.name },
+                  on: {
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.name = $event.target.value
+                    },
+                  },
+                }),
+                _vm._v(" "),
+                _vm._l(_vm.errors.name, function (error, index) {
+                  return _c(
+                    "p",
+                    {
+                      key: "error_name" + index,
+                      staticClass: "invalid-feedback",
+                    },
+                    [
+                      _vm._v(
+                        "\n                " + _vm._s(error) + "\n            "
+                      ),
+                    ]
+                  )
+                }),
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _c("label", { attrs: { for: "email" } }, [
+                  _vm._v("Inserisci la tua email"),
+                ]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.email,
+                      expression: "email",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  class: { "is-invalid": _vm.errors.email },
+                  attrs: { type: "email", id: "email", name: "email" },
+                  domProps: { value: _vm.email },
+                  on: {
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.email = $event.target.value
+                    },
+                  },
+                }),
+                _vm._v(" "),
+                _vm._l(_vm.errors.email, function (error, index) {
+                  return _c(
+                    "p",
+                    {
+                      key: "error_email" + index,
+                      staticClass: "invalid-feedback",
+                    },
+                    [
+                      _vm._v(
+                        "\n                " + _vm._s(error) + "\n            "
+                      ),
+                    ]
+                  )
+                }),
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _c("label", { attrs: { for: "message" } }, [
+                  _vm._v("Cosa vuoi dirci?"),
+                ]),
+                _vm._v(" "),
+                _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.message,
+                      expression: "message",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  class: { "is-invalid": _vm.errors.message },
+                  attrs: { id: "message", rows: "10", name: "message" },
+                  domProps: { value: _vm.message },
+                  on: {
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.message = $event.target.value
+                    },
+                  },
+                }),
+                _vm._v(" "),
+                _vm._l(_vm.errors.message, function (error, index) {
+                  return _c(
+                    "p",
+                    {
+                      key: "error_message" + index,
+                      staticClass: "invalid-feedback",
+                    },
+                    [
+                      _vm._v(
+                        "\n                " + _vm._s(error) + "\n            "
+                      ),
+                    ]
+                  )
+                }),
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              { staticClass: "btn btn-primary", attrs: { type: "submit" } },
+              [
+                _vm._v(
+                  _vm._s(_vm.sendingInProgress ? "invio in corso..." : "invia")
+                ),
+              ]
+            ),
+          ]
         ),
       ]),
-    ])
-  },
-]
+    ]),
+    _vm._v(" "),
+    _c("h1", [_vm._v("Contattaci")]),
+    _vm._v(" "),
+    _c("p", [
+      _vm._v(
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum quisquam atque nostrum dolore doloribus nisi voluptatibus, repellendus sed, officiis aspernatur id labore est voluptates aperiam deserunt laboriosam ipsam animi et."
+      ),
+    ]),
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -3736,7 +4002,7 @@ var render = function () {
                   content: post.content,
                   slug: post.slug,
                   category: post.category,
-                  tags: post.tags,
+                  img: post.cover,
                 },
               }),
             ],
@@ -3824,6 +4090,11 @@ var render = function () {
         _vm.post
           ? _c("div", [
               _c("h1", [_vm._v(_vm._s(_vm.post.title))]),
+              _vm._v(" "),
+              _c("img", {
+                staticClass: "img-fluid",
+                attrs: { src: _vm.post.cover, alt: _vm.post.title },
+              }),
               _vm._v(" "),
               _vm.post.category
                 ? _c("h3", [
